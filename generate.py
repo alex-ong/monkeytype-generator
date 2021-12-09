@@ -41,9 +41,8 @@ def split_words(base_name, words):
     """
     random.shuffle(words)
     amount, split_type = session_length(base_name)
-    if split_type == "words":
-        word_count = WORDS_PER_SESSION[base_name]
-        return words[:word_count], words[word_count:]
+    if split_type == "words":        
+        return words[:amount], words[amount:]
     
     count = 0
     result = []
