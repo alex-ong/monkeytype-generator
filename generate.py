@@ -6,7 +6,10 @@ import json
 import sys
 import pyperclip
 
-WORDS_PER_SESSION = 1000
+WORDS_PER_SESSION = { "english_1k": 1000,
+                      "english_5k": 500,
+                      "english": 210
+                      }
 
 WORD_LISTS = ["english_1k", "english_5k"]
 
@@ -31,12 +34,13 @@ def get_words_cache(name):
         return []
 
 
-def split_words(words):
+def split_words(base_name, words):
     """
     split words into first WORDS_PER_SESSION and then remainder
     """
     random.shuffle(words)
-    return words[:WORDS_PER_SESSION], words[WORDS_PER_SESSION:]
+    word_count = WORDS_PER_SESSION[base_name]
+    return words[:word_count], words[word_count:]
 
 
 def write_words(base_name, words):
@@ -57,7 +61,7 @@ def get_words(base_name):
     if len(words) == 0:
         words = get_words_json(base_name)
 
-    result, remainder = split_words(words)
+    result, remainder = split_words(base_name, words)
     write_words(base_name, remainder)
     return result
 
