@@ -6,13 +6,14 @@ import json
 import sys
 import pyperclip
 
-WORDS_PER_SESSION = { "english_1k": 1000,
-                      "english_5k": 500,
-                      "english": 210
-                      }
-
-WORD_LISTS = ["english_1k", "english_5k"]
-
+def session_length(base_name):
+    if base_name == "english_1k":
+        return 1000, "words"
+    elif base_name == "english":
+        return 200, "words"
+    else:
+        return 4900, "chars"
+        
 
 def get_words_json(base_name):
     """gets full word list. pass in filename without .json"""
@@ -39,9 +40,19 @@ def split_words(base_name, words):
     split words into first WORDS_PER_SESSION and then remainder
     """
     random.shuffle(words)
-    word_count = WORDS_PER_SESSION[base_name]
-    return words[:word_count], words[word_count:]
-
+    amount, split_type = session_length(base_name)
+    if split_type == "words":
+        word_count = WORDS_PER_SESSION[base_name]
+        return words[:word_count], words[word_count:]
+    
+    count = 0
+    result = []
+    remainder = words[:]
+    while count < amount and len(remainder) > 0:
+        result.append(remainder[0])
+        count += len(result[-1]) + 1
+        remainder = remainder[1:]
+    return result, remainder
 
 def write_words(base_name, words):
     """
@@ -68,4 +79,9 @@ def get_words(base_name):
 
 if __name__ == "__main__":
     word_list = get_words(sys.argv[1])
-    pyperclip.copy(" ".join(word_list))
+    print (len(word_list))
+    clipboard = " ".join(word_list)
+    print (len(clipboard))
+    print(clipboard)
+    pyperclip.copy(clipboard)
+    
